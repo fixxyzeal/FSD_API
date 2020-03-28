@@ -48,11 +48,6 @@ namespace FSD_API.Extension
                ;
 
             services.AddHealthChecks().AddNpgSql(conectionString);
-
-            services.Configure<ApiBehaviorOptions>(options =>
-            {
-                options.SuppressModelStateInvalidFilter = true;
-            });
         }
 
         public static void ConfigureSwagger(this IServiceCollection services)
