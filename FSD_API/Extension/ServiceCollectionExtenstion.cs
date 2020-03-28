@@ -1,6 +1,7 @@
-﻿using DAL;
+﻿using BO.ViewModels;
+using DAL;
 using DAL_Layer;
-
+using FSD_API.Filters;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -31,14 +32,21 @@ namespace FSD_API.Extension
 
         public static void ConfigureDependencyInjection(this IServiceCollection services, IConfiguration configuration)
         {
+            services.AddTransient<MessageResult>();
             services.AddTransient<IUnitOfWorkService, UnitOfWorkService>();
             services.AddTransient<ICacheService, RedisService>();
             services.AddTransient<IAuthService, AuthService>();
+            services.AddTransient<IWebScraper, WebScraper>();
+            services.AddTransient<IPhoneRankingService, PhoneRankingService>();
         }
 
         public static void ConfigureServiceCollection(this IServiceCollection services, string conectionString)
         {
-            services.AddControllers();
+            services.AddControllers(opt =>
+                {
+                    // Add ExceptionFilter
+                    opt.Filters.Add(typeof(ExceptionFilter));
+                });
 
             // Add Ef
             services.AddDbContext<SystemContext>(x => x.UseNpgsql(conectionString

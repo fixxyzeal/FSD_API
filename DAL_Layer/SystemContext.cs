@@ -17,15 +17,23 @@ namespace DAL_Layer
         // Add Model Here
         public DbSet<User> User { get; set; }
 
+        public DbSet<PhoneRanking> PhoneRanking { get; set; }
+
+        public DbSet<PhoneRankingHistory> PhoneRankingHistorie { get; set; }
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            // Add Composite key
+            // Add Index
             modelBuilder.Entity<User>()
                 .HasIndex(o => new { o.UserName, o.Email });
+            modelBuilder.Entity<PhoneRanking>()
+               .HasIndex(o => new { o.Ranking, o.DeviceName, o.OS, o.Ram, o.StorageSize });
+            modelBuilder.Entity<PhoneRankingHistory>()
+               .HasIndex(o => new { o.Ranking, o.DeviceName, o.OS, o.Ram, o.StorageSize, o.RankingDate });
         }
 
         public Func<DateTime> TimestampProvider { get; set; } = () => DateTime.Now;
@@ -52,6 +60,7 @@ namespace DAL_Layer
                     if (entry.State == EntityState.Added)
                     {
                         auditable.CreatedDate = TimestampProvider();
+
                         auditable.UpdateDate = TimestampProvider();
                     }
                     else

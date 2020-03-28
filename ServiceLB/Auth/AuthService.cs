@@ -35,19 +35,21 @@ namespace ServiceLB
                 return "User or email or password not match";
             }
 
-            return await GenerateJSONWebToken(auth).ConfigureAwait(false);
+            return await GenerateJSONWebToken(user).ConfigureAwait(false);
         }
 
-        private async Task<string> GenerateJSONWebToken(Auth auth)
+        private async Task<string> GenerateJSONWebToken(User user)
         {
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("SECRET")));
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
             var claims = new[] {
-                    new Claim(JwtRegisteredClaimNames.Email, auth.Email ),
-                    new Claim(ClaimTypes.Email, auth.Email),
+                    new Claim(JwtRegisteredClaimNames.Email, user.Email ),
+                    new Claim(ClaimTypes.Email, user.Email),
                     new Claim(ClaimTypes.Role, nameof(Role.Admin) ),
-                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+                    new Claim(ClaimTypes.Name, user.UserName ),
+                    new Claim(ClaimTypes.NameIdentifier,user.UserId.ToString()),
+                    new Claim(JwtRegisteredClaimNames.Jti, user.UserId.ToString())
                 };
 
             var token = new JwtSecurityToken(

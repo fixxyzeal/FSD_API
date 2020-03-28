@@ -106,6 +106,11 @@ namespace DAL
             return _objectSet.Count();
         }
 
+        public async Task<int> GetCountAsync()
+        {
+            return await _objectSet.CountAsync().ConfigureAwait(false);
+        }
+
         public void BulkAdd(IList<T> list)
         {
             _entities.BulkInsert(list);
@@ -143,7 +148,12 @@ namespace DAL
 
         public async Task BulkReadAsync(IList<T> list)
         {
-            await _entities.BulkReadAsync(list);
+            await _entities.BulkReadAsync(list).ConfigureAwait(false);
+        }
+
+        public async Task<int> UseSql(string sql)
+        {
+            return await _entities.Database.ExecuteSqlRawAsync(sql).ConfigureAwait(false);
         }
     }
 }

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace FSD_API.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [ApiController]
     public class AuthController : ControllerBase
     {
