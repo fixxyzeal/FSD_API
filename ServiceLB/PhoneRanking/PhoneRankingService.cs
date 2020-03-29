@@ -29,7 +29,11 @@ namespace ServiceLB
 
         public async Task<IEnumerable<PhoneRanking>> GetPhoneRanking(Guid userid, string name, string os, int? page, int? pagesize)
         {
-            if (!await CheckUpdateData(userid).ConfigureAwait(false))
+            bool chkAndrioid = await CheckUpdateData(userid, "Andriod", "https://www.antutu.com/en/ranking/rank1.htm", "AndrioidHtmlRaw").ConfigureAwait(false);
+            bool chkiOS = await CheckUpdateData(userid, "iOS", "https://www.antutu.com/en/ranking/ios1.htm", "iOSHtmlRaw").ConfigureAwait(false);
+
+            if (!chkAndrioid &&
+                !chkiOS)
             {
                 var cache = await _cacheService.Get<IEnumerable<PhoneRanking>>(string.Concat("phoneRanking", name, os, page, pagesize)).ConfigureAwait(false);
                 if (cache != null)
@@ -64,11 +68,16 @@ namespace ServiceLB
             return result;
         }
 
-        private async Task<bool> CheckUpdateData(Guid userid)
+        private async Task<bool> CheckUpdateData(Guid userid, string os, string url, string cachekey)
         {
-            var doc = await _webScraper.GetPageData("https://www.antutu.com/en/ranking/rank1.htm").ConfigureAwait(false);
+            string cache = await _cacheService.Get<string>(cachekey).ConfigureAwait(false);
 
-            string cache = await _cacheService.Get<string>("phoneRankingRawHtml").ConfigureAwait(false);
+            if (!string.IsNullOrEmpty(cache))
+            {
+                return false;
+            }
+
+            var doc = await _webScraper.GetPageData(url).ConfigureAwait(false);
 
             //Check update database if data not equal
             if (doc.DocumentElement.OuterHtml != cache)
@@ -76,11 +85,11 @@ namespace ServiceLB
                 DateTime rankingdate = DateTime.Now.Date;
 
                 var ul_List = doc.All.Where(m => m.LocalName == "ul" && m.ClassName == "list-unstyled newrank-b").ToList();
-                int i = 0;
+                int i = 1;
 
                 // Delete all phone ranking before insert
 
-                var query = await _unitOfWorkService.Service<PhoneRanking>().GetAllAsync().ConfigureAwait(false);
+                var query = await _unitOfWorkService.Service<PhoneRanking>().FindAllAsync(x => x.OS == os).ConfigureAwait(false);
 
                 foreach (var item in query)
                 {
@@ -99,8 +108,24 @@ namespace ServiceLB
 
                     var liList = ul.QuerySelectorAll("li").ToArray();
 
-                    phoneRanking.DeviceName = liList[0].TextContent;
-                    phoneRanking.OS = "Andriod";
+                    phoneRanking.DeviceName = liList[0]
+                        .TextContent
+                        .Replace(liList[0].Children[0].TextContent, "");
+
+                    phoneRanking.DeviceName = phoneRanking.DeviceName.Split("(")[0].Trim();
+
+                    string[] memAndstrorage = liList[0]
+                        .Children[1]
+                        .TextContent
+                        .Trim()
+                        .Replace("(", "")
+                        .Replace(")", "")
+                        .Split("+");
+
+                    phoneRanking.Ram = Convert.ToInt32(memAndstrorage[0]);
+                    phoneRanking.StorageSize = Convert.ToInt32(memAndstrorage[1]);
+
+                    phoneRanking.OS = os;
                     phoneRanking.CPU = Convert.ToInt32(liList[1].TextContent);
                     phoneRanking.GPU = Convert.ToInt32(liList[2].TextContent);
                     phoneRanking.MEM = Convert.ToInt32(liList[3].TextContent);
@@ -111,6 +136,8 @@ namespace ServiceLB
                     {
                         Ranking = phoneRanking.Ranking,
                         DeviceName = phoneRanking.DeviceName,
+                        Ram = phoneRanking.Ram,
+                        StorageSize = phoneRanking.StorageSize,
                         OS = phoneRanking.OS,
                         CPU = phoneRanking.CPU,
                         GPU = phoneRanking.GPU,
@@ -128,7 +155,7 @@ namespace ServiceLB
                 await _unitOfWorkService.SaveAsync().ConfigureAwait(false);
 
                 // Set Cache
-                await _cacheService.Set("phoneRankingRawHtml", doc.DocumentElement.OuterHtml, DateTime.Now.AddHours(6)).ConfigureAwait(false);
+                await _cacheService.Set(cachekey, doc.DocumentElement.OuterHtml, DateTime.Now.AddHours(6)).ConfigureAwait(false);
 
                 return true;
             }

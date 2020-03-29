@@ -13,7 +13,8 @@ namespace ServiceLB
         {
             ConnectionMultiplexer muxer = ConnectionMultiplexer
                       .Connect($"{Environment.GetEnvironmentVariable("REDIS_HOST")}" +
-                      $",password={Environment.GetEnvironmentVariable("REDIS_PASS")}");
+                      $",password={Environment.GetEnvironmentVariable("REDIS_PASS")}" +
+                      ",connectTimeout=3600000,connectRetry=5");
             db = muxer.GetDatabase();
         }
 
