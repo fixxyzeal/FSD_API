@@ -18,7 +18,9 @@
         "NG_SQL_HOST": "Host=ec2-107-22-192-11.compute-1.amazonaws.com;Database=d76t7u17aeoqmv;Username=soezcngdwazdxs;Password=009200f1e7f0936d55cd01f4277fc59213c6a9238f4a022f0a3d9761bc7bab4f;port=5432;pooling=true;SSL Mode=Require;TrustServerCertificate=True;",
         "SECRET": "785c0a78-ed10-4cd1-aba1-b4e506b1d67d5",
         "REDIS_HOST": "redis-11876.c56.east-us.azure.cloud.redislabs.com:11876",
-        "REDIS_PASS": "2rIopL8zDWx8EdM5AUMgHLnmSWWI5KEw"
+        "REDIS_PASS": "2rIopL8zDWx8EdM5AUMgHLnmSWWI5KEw",
+        "SmtpUsername": "fixxyzeally2@gmail.com",
+        "SmtpPassword": "Zeallyfixxy5"
       }
     },
     "FSD_API": {
@@ -30,7 +32,9 @@
         "NG_SQL_HOST": "Host=ec2-107-22-192-11.compute-1.amazonaws.com;Database=d76t7u17aeoqmv;Username=soezcngdwazdxs;Password=009200f1e7f0936d55cd01f4277fc59213c6a9238f4a022f0a3d9761bc7bab4f;port=5432;pooling=true;SSL Mode=Require;TrustServerCertificate=True;",
         "SECRET": "785c0a78-ed10-4cd1-aba1-b4e506b1d67d5",
         "REDIS_HOST": "redis-11876.c56.east-us.azure.cloud.redislabs.com:11876",
-        "REDIS_PASS": "2rIopL8zDWx8EdM5AUMgHLnmSWWI5KEw"
+        "REDIS_PASS": "2rIopL8zDWx8EdM5AUMgHLnmSWWI5KEw",
+        "SmtpUsername": "fixxyzeally2@gmail.com",
+        "SmtpPassword": "Zeallyfixxy5"
       },
       "applicationUrl": "https://localhost:5001;http://localhost:5000"
     },
