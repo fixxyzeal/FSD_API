@@ -54,6 +54,8 @@ namespace DAL
 
         IQueryable<T> GetQuery();
 
+        IQueryable<T> GetQueryPaging(IQueryable<T> query, int page, int pagesize);
+
         void Modified(T entity);
 
         Task<int> UseSql(string sql);

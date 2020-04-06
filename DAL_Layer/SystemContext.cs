@@ -21,6 +21,8 @@ namespace DAL_Layer
 
         public DbSet<PhoneRankingHistory> PhoneRankingHistorie { get; set; }
 
+        public DbSet<BO.Models.Action> Action { get; set; }
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
         }

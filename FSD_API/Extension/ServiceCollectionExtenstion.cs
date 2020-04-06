@@ -38,6 +38,7 @@ namespace FSD_API.Extension
             services.AddTransient<IAuthService, AuthService>();
             services.AddTransient<IWebScraper, WebScraper>();
             services.AddTransient<IPhoneRankingService, PhoneRankingService>();
+            services.AddTransient<IActionService, ActionService>();
             services.AddScoped<IEmailService, EmailService>();
         }
 

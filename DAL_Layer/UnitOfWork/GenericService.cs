@@ -36,6 +36,12 @@ namespace DAL
             return _objectSet.AsQueryable();
         }
 
+        public IQueryable<T> GetQueryPaging(IQueryable<T> query, int page, int pagesize)
+        {
+            int skip = (page - 1) * pagesize;
+            return query.Skip(skip).Take(page).AsQueryable();
+        }
+
         public IQueryable<T> GetAll()
         {
             return _objectSet.AsNoTracking();
