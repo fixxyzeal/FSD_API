@@ -38,6 +38,8 @@ namespace FSD_API
         {
             services.ConfigureServiceCollection(Environment.GetEnvironmentVariable("NG_SQL_HOST"));
 
+            services.ConfigureMongoService(Environment.GetEnvironmentVariable("MONGO_HOST"));
+
             services.ConfigureCors();
 
             services.ConfigureDependencyInjection(Configuration);

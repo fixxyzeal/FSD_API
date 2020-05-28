@@ -1,4 +1,5 @@
-﻿using BO.ViewModels;
+﻿using BO.Models.Mongo;
+using BO.ViewModels;
 using DAL;
 using DAL_Layer;
 using FSD_API.Filters;
@@ -11,6 +12,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using ServiceLB;
+using System;
 using System.Text;
 
 namespace FSD_API.Extension
@@ -38,6 +40,8 @@ namespace FSD_API.Extension
             services.AddTransient<IAuthService, AuthService>();
             services.AddTransient<IWebScraper, WebScraper>();
             services.AddTransient<IPhoneRankingService, PhoneRankingService>();
+            services.AddTransient<ISleepInformationService, SleepInformationService>();
+            services.AddTransient<IBrushingInformationService, BrushingInformationService>();
             services.AddTransient<IActionService, ActionService>();
             services.AddScoped<IEmailService, EmailService>();
         }
@@ -60,6 +64,14 @@ namespace FSD_API.Extension
             services.AddHealthChecks().AddNpgSql(conectionString);
         }
 
+        public static void ConfigureMongoService(this IServiceCollection services, string conectionString)
+        {
+            MongSettings bookSetting = new MongSettings() { ConnectionString = conectionString, DatabaseName = "ZeallyStudio" };
+
+            services.AddSingleton<IDatabaseSettings>(bookSetting);
+            services.AddSingleton<IMongoUnitOfWork, MongoUnitOfWork>();
+        }
+
         public static void ConfigureSwagger(this IServiceCollection services)
         {
             // Register the Swagger generator, defining 1 or more Swagger documents
@@ -68,8 +80,8 @@ namespace FSD_API.Extension
                 c.SwaggerDoc("v1", new OpenApiInfo
                 {
                     Title = "Awesome API",
-                    Version = "v1",
-                    Description = "FSD .Net Core API",
+                    Version = "v1 ",
+                    Description = "FSD .Net Core API " + services.GetType().Assembly.GetName().Version.ToString(),
 
                     Contact = new OpenApiContact
                     {
