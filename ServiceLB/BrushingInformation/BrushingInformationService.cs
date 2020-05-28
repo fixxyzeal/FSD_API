@@ -38,7 +38,7 @@ namespace ServiceLB
                     data.BrushingRemain--;
                 }
 
-                await _mongoUnitOfWork.UpdateAsync(collectionName, x => x.Id == brushingInformation.Id, data).ConfigureAwait(false);
+                await _mongoUnitOfWork.UpdateAsync(collectionName, x => x.Id == data.Id, data).ConfigureAwait(false);
             }
             else
             {
