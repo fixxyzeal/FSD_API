@@ -43,7 +43,7 @@ namespace ServiceLB
             else
             {
                 brushingInformation.BrushingRemain = brushingInformation.BrushingSet;
-
+                brushingInformation.BrushingRemain = brushingInformation.BrushingSet - 1;
                 data = await _mongoUnitOfWork.CreateAsync(collectionName, brushingInformation).ConfigureAwait(false);
             }
             return data;
