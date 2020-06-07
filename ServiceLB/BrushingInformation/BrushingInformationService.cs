@@ -6,16 +6,21 @@ using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
+using System.Linq;
 
 namespace ServiceLB
 {
     public class BrushingInformationService : IBrushingInformationService
     {
         private readonly IMongoUnitOfWork _mongoUnitOfWork;
+
         private readonly ILineMessageService _lineMessageService;
         private readonly string collectionName = "BrushingInformation";
 
-        public BrushingInformationService(IMongoUnitOfWork mongoUnitOfWork, ILineMessageService lineMessageService)
+        public BrushingInformationService(
+            IMongoUnitOfWork mongoUnitOfWork,
+            ILineMessageService lineMessageService
+            )
         {
             _mongoUnitOfWork = mongoUnitOfWork;
             _lineMessageService = lineMessageService;
@@ -60,26 +65,35 @@ namespace ServiceLB
 
         public async Task DoWork()
         {
-            var result = await _mongoUnitOfWork.GetAllAsync<BrushingInformation>(collectionName, x => x.BrushingDate == DateTime.Now.ToUniversalTime().Date).ConfigureAwait(false);
-            string sendText = "";
-            foreach (var item in result)
-            {
-                if (item.BrushingRemain == 0)
-                {
-                    continue;
-                }
+            var data = await _mongoUnitOfWork.GetAllAsync<LineUsers>("LineUsers", x => true).ConfigureAwait(false);
 
-                if (item.BrushingRemain == item.BrushingSet)
+            var users = data.Select(x => x.UserId).Distinct();
+
+            foreach (string user in users)
+            {
+                var result = await _mongoUnitOfWork.GetAllAsync<BrushingInformation>(collectionName, x => x.LineUserId == user && x.BrushingDate == DateTime.Now.ToUniversalTime().Date).ConfigureAwait(false);
+                string sendText = "";
+
+                if (result.Count == 0)
                 {
                     sendText = $"วันนี้คุณยังไม่ได้แปรงฟันเลย กรุณาแปรงฟันวันละ 3 ครั้งเพื่อสุขภาพฟันที่ดี {StringHelper.GetCodePoint("0x100083")}";
+                    await _lineMessageService.SendTextMessage(user, new string[] { sendText }).ConfigureAwait(false);
                 }
 
-                if (item.BrushingRemain > 0 && item.BrushingRemain != item.BrushingSet)
+                foreach (var item in result)
                 {
-                    sendText = $"คุณยังค้างแปรงฟันอีก {item.BrushingRemain} ครั้ง กรุณาแปรงฟันเพื่อสุขภาพฟันที่ดี {StringHelper.GetCodePoint("0x100082")}";
-                }
+                    if (item.BrushingRemain == 0)
+                    {
+                        continue;
+                    }
 
-                await _lineMessageService.SendTextMessage(item.LineUserId, new string[] { sendText }).ConfigureAwait(false);
+                    if (item.BrushingRemain > 0 && item.BrushingRemain != item.BrushingSet)
+                    {
+                        sendText = $"คุณยังค้างแปรงฟันอีก {item.BrushingRemain} ครั้ง กรุณาแปรงฟันเพื่อสุขภาพฟันที่ดี {StringHelper.GetCodePoint("0x100082")}";
+                    }
+
+                    await _lineMessageService.SendTextMessage(item.LineUserId, new string[] { sendText }).ConfigureAwait(false);
+                }
             }
         }
     }

@@ -62,7 +62,7 @@ namespace ServiceLB
                 query = _unitOfWorkService.Service<BO.Models.Action>().GetQueryPaging(query, page.Value, pagesize.Value);
             }
 
-            return await query.ToListAsync().ConfigureAwait(false);
+            return await query.OrderByDescending(x => x.CreatedDate).ToListAsync().ConfigureAwait(false);
         }
     }
 }

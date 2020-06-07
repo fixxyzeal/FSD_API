@@ -45,6 +45,15 @@ namespace FSD_API.Extension
             services.AddTransient<IBrushingInformationService, BrushingInformationService>();
             services.AddTransient<IActionService, ActionService>();
             services.AddScoped<IEmailService, EmailService>();
+
+            // Add Cronjob
+            services.AddCronJob<BrushingInformationCronJob>(c =>
+            {
+                c.TimeZoneInfo = TimeZoneInfo.Utc;
+                //c.CronExpression = @"0 23-17 */6 * *";
+                //for test
+                c.CronExpression = @"* * * * *";
+            });
         }
 
         public static void ConfigureServiceCollection(this IServiceCollection services, string conectionString)
@@ -63,15 +72,6 @@ namespace FSD_API.Extension
                ;
 
             services.AddHealthChecks().AddNpgSql(conectionString);
-
-            // Add Cronjob
-            services.AddCronJob<BrushingInformationCronJob>(c =>
-            {
-                c.TimeZoneInfo = TimeZoneInfo.Utc;
-                c.CronExpression = @"0 23-17 */6 * *";
-                //for test
-                //c.CronExpression = @"* * * * *";
-            });
         }
 
         public static void ConfigureMongoService(this IServiceCollection services, string conectionString)
