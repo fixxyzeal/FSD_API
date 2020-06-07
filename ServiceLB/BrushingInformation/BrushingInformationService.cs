@@ -18,8 +18,15 @@ namespace ServiceLB
             _mongoUnitOfWork = mongoUnitOfWork;
         }
 
-        public async Task<IEnumerable<BrushingInformation>> Get(Expression<Func<BrushingInformation, bool>> match)
+        public async Task<IEnumerable<BrushingInformation>> Get(bool? latest, string userId)
         {
+            Expression<Func<BrushingInformation, bool>> match = (x) => x.UserId == userId;
+
+            if (latest == true)
+            {
+                match = (x) => x.UserId == userId && x.BrushingDate == DateTime.Now.ToUniversalTime().Date;
+            }
+
             return await _mongoUnitOfWork.GetAllAsync(collectionName, match).ConfigureAwait(false);
         }
 

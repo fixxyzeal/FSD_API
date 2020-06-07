@@ -10,6 +10,6 @@ namespace ServiceLB
     {
         Task<BrushingInformation> ManageInformation(BrushingInformation brushingInformation);
 
-        Task<IEnumerable<BrushingInformation>> Get(Expression<Func<BrushingInformation, bool>> match);
+        Task<IEnumerable<BrushingInformation>> Get(bool? latest, string userId);
     }
 }

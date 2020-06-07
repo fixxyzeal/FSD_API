@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using BO.Models.Mongo;
@@ -24,14 +25,14 @@ namespace FSD_API.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Get()
+        public async Task<IActionResult> Get([FromQuery] bool? lastest)
 
         {
             var userinformation = ClaimHelper.GetClaim(User.Identity as ClaimsIdentity);
 
             var result = await _brushingInformationService
-                .Get(x => x.UserId == userinformation.UserId.ToString())
-                .ConfigureAwait(false);
+                                  .Get(lastest, userinformation.UserId.ToString())
+                                  .ConfigureAwait(false);
 
             return Ok(result);
         }
