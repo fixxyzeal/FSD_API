@@ -11,5 +11,7 @@ namespace ServiceLB
         Task<BrushingInformation> ManageInformation(BrushingInformation brushingInformation);
 
         Task<IEnumerable<BrushingInformation>> Get(bool? latest, string userId);
+
+        Task DoWork();
     }
 }

@@ -35,7 +35,8 @@
         "REDIS_PASS": "2rIopL8zDWx8EdM5AUMgHLnmSWWI5KEw",
         "SmtpUsername": "fixxyzeally2@gmail.com",
         "SmtpPassword": "Zeallyfixxy5",
-        "MONGO_HOST": "mongodb+srv://fixxyzeally:Zeallyfixxy5!@cluster0-pcygo.mongodb.net/test?retryWrites=true&w=majority"
+        "MONGO_HOST": "mongodb+srv://fixxyzeally:Zeallyfixxy5!@cluster0-pcygo.mongodb.net/test?retryWrites=true&w=majority",
+        "LineChannelAccessToken": "yUV7WEF2IRuJ9sYT/UWpzlFfjkv4tVNChXGqseOhPzPe1aHQQ2asCoNhqw7X0cTHPLPrMu+tZMv1g/h/IrOz4CfMZWNgYbtdmVr3TLkcpE2wIltuR4MGeYHgJjLXchZ5jdSXAm4DSXKTFlrZTatL5QdB04t89/1O/w1cDnyilFU="
       },
       "applicationUrl": "https://localhost:5001;http://localhost:5000"
     },

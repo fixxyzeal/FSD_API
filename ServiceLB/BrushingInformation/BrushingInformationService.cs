@@ -1,5 +1,6 @@
 ﻿using BO.Models.Mongo;
 using DAL;
+using ServiceLB.Helper;
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
@@ -11,11 +12,13 @@ namespace ServiceLB
     public class BrushingInformationService : IBrushingInformationService
     {
         private readonly IMongoUnitOfWork _mongoUnitOfWork;
+        private readonly ILineMessageService _lineMessageService;
         private readonly string collectionName = "BrushingInformation";
 
-        public BrushingInformationService(IMongoUnitOfWork mongoUnitOfWork)
+        public BrushingInformationService(IMongoUnitOfWork mongoUnitOfWork, ILineMessageService lineMessageService)
         {
             _mongoUnitOfWork = mongoUnitOfWork;
+            _lineMessageService = lineMessageService;
         }
 
         public async Task<IEnumerable<BrushingInformation>> Get(bool? latest, string userId)
@@ -49,11 +52,35 @@ namespace ServiceLB
             }
             else
             {
-                brushingInformation.BrushingRemain = brushingInformation.BrushingSet;
                 brushingInformation.BrushingRemain = brushingInformation.BrushingSet - 1;
                 data = await _mongoUnitOfWork.CreateAsync(collectionName, brushingInformation).ConfigureAwait(false);
             }
             return data;
+        }
+
+        public async Task DoWork()
+        {
+            var result = await _mongoUnitOfWork.GetAllAsync<BrushingInformation>(collectionName, x => x.BrushingDate == DateTime.Now.ToUniversalTime().Date).ConfigureAwait(false);
+            string sendText = "";
+            foreach (var item in result)
+            {
+                if (item.BrushingRemain == 0)
+                {
+                    continue;
+                }
+
+                if (item.BrushingRemain == item.BrushingSet)
+                {
+                    sendText = $"วันนี้คุณยังไม่ได้แปรงฟันเลย กรุณาแปรงฟันวันละ 3 ครั้งเพื่อสุขภาพฟันที่ดี {StringHelper.GetCodePoint("0x100083")}";
+                }
+
+                if (item.BrushingRemain > 0 && item.BrushingRemain != item.BrushingSet)
+                {
+                    sendText = $"คุณยังค้างแปรงฟันอีก {item.BrushingRemain} ครั้ง กรุณาแปรงฟันเพื่อสุขภาพฟันที่ดี {StringHelper.GetCodePoint("0x100082")}";
+                }
+
+                await _lineMessageService.SendTextMessage(item.LineUserId, new string[] { sendText }).ConfigureAwait(false);
+            }
         }
     }
 }

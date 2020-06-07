@@ -39,6 +39,7 @@ namespace FSD_API.Extension
             services.AddTransient<ICacheService, RedisService>();
             services.AddTransient<IAuthService, AuthService>();
             services.AddTransient<IWebScraper, WebScraper>();
+            services.AddTransient<ILineMessageService, LineMessageService>();
             services.AddTransient<IPhoneRankingService, PhoneRankingService>();
             services.AddTransient<ISleepInformationService, SleepInformationService>();
             services.AddTransient<IBrushingInformationService, BrushingInformationService>();
@@ -62,6 +63,13 @@ namespace FSD_API.Extension
                ;
 
             services.AddHealthChecks().AddNpgSql(conectionString);
+
+            // Add Cronjob
+            services.AddCronJob<BrushingInformationCronJob>(c =>
+            {
+                c.TimeZoneInfo = TimeZoneInfo.Utc;
+                c.CronExpression = @"0 23-17 */6 * *";
+            });
         }
 
         public static void ConfigureMongoService(this IServiceCollection services, string conectionString)
@@ -134,6 +142,24 @@ namespace FSD_API.Extension
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret))
                 };
             });
+        }
+
+        private static IServiceCollection AddCronJob<T>(this IServiceCollection services, Action<IScheduleConfig<T>> options) where T : CronJobService
+        {
+            if (options == null)
+            {
+                throw new ArgumentNullException(nameof(options), @"Please provide Schedule Configurations.");
+            }
+            var config = new ScheduleConfig<T>();
+            options.Invoke(config);
+            if (string.IsNullOrWhiteSpace(config.CronExpression))
+            {
+                throw new ArgumentNullException(nameof(ScheduleConfig<T>.CronExpression), @"Empty Cron Expression is not allowed.");
+            }
+
+            services.AddSingleton<IScheduleConfig<T>>(config);
+            services.AddHostedService<T>();
+            return services;
         }
     }
 }

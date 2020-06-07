@@ -14,6 +14,7 @@ namespace BO.Models.Mongo
 
         public string UserId { get; set; }
 
+        public string LineUserId { get; set; }
         public int BrushingSet { get; set; }
 
         public int BrushingRemain { get; set; }
