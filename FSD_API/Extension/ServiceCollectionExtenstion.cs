@@ -68,7 +68,8 @@ namespace FSD_API.Extension
             services.AddCronJob<BrushingInformationCronJob>(c =>
             {
                 c.TimeZoneInfo = TimeZoneInfo.Utc;
-                c.CronExpression = @"0 23-17 */6 * *";
+                //c.CronExpression = @"0 23-17 */6 * *";
+                c.CronExpression = @"* * * * *";
             });
         }
 
