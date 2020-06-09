@@ -50,7 +50,7 @@ namespace FSD_API.Extension
             services.AddCronJob<BrushingInformationCronJob>(c =>
             {
                 c.TimeZoneInfo = TimeZoneInfo.Utc;
-                c.CronExpression = @"0 0 23-17/6 * *";
+                c.CronExpression = @"0 0-17/6 * * *";
                 //for test
                 //c.CronExpression = @"* * * * *";
             });
@@ -67,8 +67,10 @@ namespace FSD_API.Extension
             // Add Ef
             services.AddDbContext<SystemContext>(x => x.UseNpgsql(conectionString
 
-                , b => b.MigrationsAssembly("FSD_API")).ConfigureWarnings(warnings => warnings.Throw(RelationalEventId.TransactionError))
-                , ServiceLifetime.Transient)
+                , b => b.MigrationsAssembly("FSD_API").CommandTimeout((int)TimeSpan.FromMinutes(10).TotalSeconds)).ConfigureWarnings(warnings => warnings.Throw(RelationalEventId.TransactionError))
+
+                , ServiceLifetime.Transient
+                )
                ;
 
             services.AddHealthChecks().AddNpgSql(conectionString);

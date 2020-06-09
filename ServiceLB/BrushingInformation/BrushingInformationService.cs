@@ -67,7 +67,7 @@ namespace ServiceLB
         {
             var data = await _mongoUnitOfWork.GetAllAsync<LineUsers>("LineUsers", x => true).ConfigureAwait(false);
 
-            var users = data.Select(x => x.UserId).Distinct();
+            string[] users = data.Select(x => x.UserId).Distinct().ToArray();
 
             foreach (string user in users)
             {
