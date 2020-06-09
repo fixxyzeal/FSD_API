@@ -50,7 +50,7 @@ namespace ServiceLB
             {
                 if (data.BrushingRemain > 0)
                 {
-                    data.BrushingRemain--;
+                    data.BrushingRemain -= 1;
                 }
 
                 await _mongoUnitOfWork.UpdateAsync(collectionName, x => x.Id == data.Id, data).ConfigureAwait(false);

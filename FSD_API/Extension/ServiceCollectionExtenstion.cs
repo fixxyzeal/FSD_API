@@ -67,7 +67,7 @@ namespace FSD_API.Extension
             // Add Ef
             services.AddDbContext<SystemContext>(x => x.UseNpgsql(conectionString
 
-                , b => b.MigrationsAssembly("FSD_API").CommandTimeout((int)TimeSpan.FromMinutes(10).TotalSeconds)).ConfigureWarnings(warnings => warnings.Throw(RelationalEventId.TransactionError))
+                , b => b.MigrationsAssembly("FSD_API").CommandTimeout((int)TimeSpan.FromMinutes(10).TotalSeconds).EnableRetryOnFailure()).ConfigureWarnings(warnings => warnings.Throw(RelationalEventId.TransactionError))
 
                 , ServiceLifetime.Transient
                 )
