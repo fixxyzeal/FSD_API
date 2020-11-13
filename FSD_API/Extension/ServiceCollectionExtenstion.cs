@@ -43,6 +43,7 @@ namespace FSD_API.Extension
             services.AddTransient<IPhoneRankingService, PhoneRankingService>();
             services.AddTransient<ISleepInformationService, SleepInformationService>();
             services.AddTransient<IBrushingInformationService, BrushingInformationService>();
+            services.AddTransient<IFundsService, FundsService>();
             services.AddTransient<IOilPriceService, OilPriceService>();
             services.AddTransient<IActionService, ActionService>();
             services.AddScoped<IEmailService, EmailService>();
