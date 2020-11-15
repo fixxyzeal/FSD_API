@@ -21,6 +21,18 @@ namespace FSD_API.Controllers
         }
 
         [AllowAnonymous]
+        [HttpGet]
+        public async Task<IActionResult> GetFundsData()
+
+        {
+            var result = await _fundsService
+                                  .GetSET()
+                                  .ConfigureAwait(false);
+
+            return Ok(result);
+        }
+
+        [AllowAnonymous]
         [HttpPost("SendSetLineNoti")]
         public async Task<IActionResult> SendLineNotification()
 

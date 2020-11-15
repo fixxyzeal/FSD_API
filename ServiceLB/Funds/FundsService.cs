@@ -28,6 +28,12 @@ namespace ServiceLB
             _mongoUnitOfWork = mongoUnitOfWork;
         }
 
+        public async Task<IEnumerable<SET>> GetSET()
+        {
+            var data = await _mongoUnitOfWork.GetAllAsync<SET>(collectionName, x => true).ConfigureAwait(false);
+            return data;
+        }
+
         public async Task SendSETNoti()
         {
             //Get Line User
