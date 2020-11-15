@@ -25,6 +25,7 @@ namespace FSD_API.Controllers
         public async Task<IActionResult> GetFundsData()
 
         {
+            //Get fundsdata
             var result = await _fundsService
                                   .GetSET()
                                   .ConfigureAwait(false);
