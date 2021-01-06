@@ -1,7 +1,7 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFramework>net5.0</TargetFramework>
     <UserSecretsId>469bff02-b339-4d58-995e-03f71ec695b2</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
   </PropertyGroup>
@@ -31,6 +31,4 @@
     <ProjectReference Include="..\DAL_Layer\DAL.csproj" />
     <ProjectReference Include="..\ServiceLB\ServiceLB.csproj" />
   </ItemGroup>
-
-
 </Project>

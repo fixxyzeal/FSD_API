@@ -52,11 +52,11 @@ namespace ServiceLB
             MimeMessage mimeMessage = new MimeMessage(); // MIME : Multipurpose Internet Mail Extension
             mimeMessage.From.Add(new MailboxAddress(_fromAddressTitle, _fromAddress));
 
-            mimeMessage.To.Add(new MailboxAddress(toAddress));
+            mimeMessage.To.Add(new MailboxAddress(string.Empty, toAddress));
 
             mimeMessage.Subject = subject;
 
-            var bodyBuilder = new MimeKit.BodyBuilder
+            BodyBuilder bodyBuilder = new MimeKit.BodyBuilder
 
             {
                 HtmlBody = body
@@ -64,7 +64,7 @@ namespace ServiceLB
 
             mimeMessage.Body = bodyBuilder.ToMessageBody();
 
-            using (var client = new MailKit.Net.Smtp.SmtpClient())
+            using (MailKit.Net.Smtp.SmtpClient client = new MailKit.Net.Smtp.SmtpClient())
             {
                 await client.ConnectAsync(_smtpServer, _smtpPort, _enableSsl).ConfigureAwait(false);
 

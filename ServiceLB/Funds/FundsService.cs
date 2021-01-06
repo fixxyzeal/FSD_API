@@ -30,7 +30,7 @@ namespace ServiceLB
 
         public async Task<IEnumerable<SET>> GetSET()
         {
-            var data = await _mongoUnitOfWork.GetAllAsync<SET>(collectionName, x => true).ConfigureAwait(false);
+            var data = await _mongoUnitOfWork.GetAllAsync<SET>(collectionName, _ => true).ConfigureAwait(false);
             return data;
         }
 
